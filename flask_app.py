@@ -67,35 +67,45 @@ def create_database():
 def fetch_champions_data():
     try:
         # Ergast API URL for driver standings (season 1)
-        ergast_url = "http://ergast.com/api/f1/driverStandings/1.json"
+        ergast_url = "http://ergast.com/api/f1/driverStandings/1.json?limit=100"
 
         response = requests.get(ergast_url)
         response.raise_for_status()  # Raise an exception if the request fails
         data = response.json()
-        return data["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]
+
+        champions_data = []
+        for driver in data["MRData"]["StandingsTable"]["StandingsLists"]:
+            champions_data.append(driver)
+        return champions_data #data["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]
     except requests.RequestException as e:
         print(f"Error fetching data from Ergast API: {e}")
         return []
 
 def insert_champions_data(champions_data):
     # Create a connection
-    connection = mysql.connector.connect(
-        user=username,
-        password=password,
-        host=hostname,
-        database=database_name)
+    #connection = mysql.connector.connect(
+    #    user=username,
+    #    password=password,
+    #    host=hostname,
+    #    database=database_name)
 
     # Create a cursor
-    cursor = connection.cursor()
+    #cursor = connection.cursor()
 
     for champion in champions_data:
         year = int(champion["season"])
-        driver_name = f"{champion['Driver']['givenName']} {champion['Driver']['familyName']}"
-        team_name = champion["Constructors"][0]["name"]
-        cursor.execute("INSERT INTO champions VALUES (?, ?, ?)", (driver_name, team_name, year))
-    connection.commit()
-    connection.close()
+        for driver in champion['DriverStandings']:
+            driver_name = f"{driver['Driver']['givenName']} {driver['Driver']['familyName']}"
+        print(str(year) + str(' ') + driver_name)
+        #team_name = champion["Constructors"][0]["name"]
+        #cursor.execute("INSERT INTO f1_champions VALUES (?, ?, ?)", (driver_name, team_name, year))
+    #connection.commit()
+    #connection.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    create_database()
+    champions_data = fetch_champions_data()
+    #print(champions_data)
+    insert_champions_data(champions_data)
+    #app.run(debug=True)
 
