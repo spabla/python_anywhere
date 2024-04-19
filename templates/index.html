@@ -3,20 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Sundev Pabla's Webpage</title>
+    <title>Virtual F1 Champion of Champions Championship</title>
+    <style>
+        /* Add spacing between dropdowns */
+        select
+        {
+            margin-right: 50px; /* Adjust the value as needed */
+        }
+        /* Add spacing between dropdowns */
+        select
+        {
+            margin-bottom: 20px; /* Adjust the value as needed */
+        }
+        select
+        {
+            width: 200px; /* Set your desired width here */
+        }
+                /* Collapse the border to prevent gaps between table rows/cells */
+        table
+        {
+            border-collapse: collapse;
+        }
+
+        /* Add 1em padding to the left/right of all cells (except the first row) */
+        tr + tr td
+        {
+            padding: 0 1em;
+        }
+
+        /* Optional: Remove the border from the bottom of the table */
+        tr:last-child
+        {
+            border-bottom: none;
+        }
+
+            /* Style the link within the table row */
+        tr a
+        {
+            text-decoration: underline; /* Underline the link text */
+            color: blue; /* Set the link color to blue */
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Sundev Pabla's Webpage</h1>
-    <label for="myDropdown">Select an option:</label>
-    <select id="myDropdown" onchange="handleSelection()">
-        <option value="About Sundev">About Sundev</option>
-        <option value="Agile SW Development">Agile SW Development</option>
-        <option value="Embedded SW Development">Embedded SW Development</option>
+    <h1 style="color:red;">Virtual F1 Champion of Champions Championship</h1>
+    <label for="driver1_dropdown">Select Driver 1:</label>
+    <select id="driver1_dropdown" onchange="handleSelection()">
+        <option value="Schumacher">M Schumacher</option>
+        <option value="Hamilton">L Hamilton</option>
+        <option value="Verstappen">M Verstappen</option>
     </select>
+    <label for="driver2_dropdown">Select Driver 2:</label>
+    <select id="driver2_dropdown" onchange="handleSelection()">
+        <option value="Schumacher">M Schumacher</option>
+        <option value="Hamilton">L Hamilton</option>
+        <option value="Verstappen">M Verstappen</option>
+    </select>
+    <table>
+        <tr>
+            <th style="border: 1px solid black;">Grand Prix</th>
+            <th style="border: 1px solid black;">Circuit</th>
+            <th style="border: 1px solid black;">Driver 1 Time</th>
+            <th style="border: 1px solid black;">Driver 2 Time</th>
+            <th style="border: 1px solid black;">Winner</th>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black;">British</td>
+            <td style="border: 1px solid black;">Silverstone</td>
+            <td style="border: 1px solid black;"><a href="#">1:32:77</a></td>
+            <td style="border: 1px solid black;"><a href="#">1:35:41</a></td>
+            <td style="border: 1px solid black;">M Schumacher</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black;">Italian</td>
+            <td style="border: 1px solid black;">Monza</td>
+            <td style="border: 1px solid black;"><a href="#">1:38:42</a></td>
+            <td style="border: 1px solid black;"><a href="#">1:41:34</a></td>
+            <td style="border: 1px solid black;">M Schumacher</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black;">Australian</td>
+            <td style="border: 1px solid black;">Albert Park</td>
+            <td style="border: 1px solid black;"><a href="#">1:26:39</a></td>
+            <td style="border: 1px solid black;"><a href="#">1:24:54</a></td>
+            <td style="border: 1px solid black;">L Hamilton</td>
+        </tr>
+    <!-- Add more rows as needed -->
+    </table>
+    <h1 style="color:red;">Champion of Champions is: M Schumacher</h1>
     <script>
-        const dropdown = document.getElementById('myDropdown');
+        const dropdown = document.getElementById('driver1_dropdown');
         dropdown.addEventListener('change', async () => {
             const selectedItem = dropdown.value;
+            try {
+                const response = await fetch('/process_item', {
+                    method: 'POST',
+                    body: new URLSearchParams({ selected_item: selectedItem }),
+                });
+                const data = await response.json();
+                window.alert(data.message);
+                console.log(data.message);
+            } catch (error) {
+                console.error('Error sending data to backend:', error);
+            }
+        });
+    </script>
+    <script>
+        const dropdown2 = document.getElementById('driver2_dropdown');
+        dropdown2.addEventListener('change', async () => {
+            const selectedItem = dropdown2.value;
             try {
                 const response = await fetch('/process_item', {
                     method: 'POST',
