@@ -16,9 +16,15 @@ app = Flask(__name__)
 def index():
     create_database()
     champions_data = fetch_champions_data()
-    #insert_champions_data(champions_data)
+    insert_champions_data(champions_data)
+    drivers=[]
+    for champion in champions_data:
+        for driver in champion['DriverStandings']:
+            driver_name = f"{driver['Driver']['givenName']} {driver['Driver']['familyName']}"
+            if driver_name not in drivers:
+                drivers.append(driver_name)
 
-    return render_template("index.html")
+    return render_template("index.html",drivers=drivers)
 
 @app.route('/process_item', methods=['POST'])
 def process_item():
@@ -101,9 +107,5 @@ def insert_champions_data(champions_data):
     connection.close()
 
 if __name__ == '__main__':
-    create_database()
-    champions_data = fetch_champions_data()
-    #print(champions_data)
-    insert_champions_data(champions_data)
-    #app.run(debug=True)
+    app.run(debug=True)
 

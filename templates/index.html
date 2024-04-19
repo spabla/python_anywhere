@@ -48,17 +48,20 @@
 <body>
     <h1 style="color:red;">Virtual F1 Champion of Champions Championship</h1>
     <label for="driver1_dropdown">Select Driver 1:</label>
-    <select id="driver1_dropdown" onchange="handleSelection()">
-        <option value="Schumacher">M Schumacher</option>
-        <option value="Hamilton">L Hamilton</option>
-        <option value="Verstappen">M Verstappen</option>
+    <select id="driver1_dropdown" method="GET" action="/" onchange="handleSelection()">
+        {% for driver in drivers %}
+            <option value="{{ driver }}">{{ driver }}</option>
+        {% endfor %}
     </select>
     <label for="driver2_dropdown">Select Driver 2:</label>
-    <select id="driver2_dropdown" onchange="handleSelection()">
-        <option value="Schumacher">M Schumacher</option>
-        <option value="Hamilton">L Hamilton</option>
-        <option value="Verstappen">M Verstappen</option>
+    <select id="driver2_dropdown" method="GET" action="/" onchange="handleSelection()">
+        {% for driver in drivers %}
+            <option value="{{ driver }}">{{ driver }}</option>
+        {% endfor %}
     </select>
+
+    <button>Lets GO Simulated Racing</button>
+
     <table>
         <tr>
             <th style="border: 1px solid black;">Grand Prix</th>
