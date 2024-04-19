@@ -44,7 +44,6 @@ def create_database():
         CREATE TABLE IF NOT EXISTS f1_champions (
             id INT AUTO_INCREMENT PRIMARY KEY,
             driver_name VARCHAR(255),
-            team VARCHAR(255),
             year INT
         )
         """
@@ -76,31 +75,30 @@ def fetch_champions_data():
         champions_data = []
         for driver in data["MRData"]["StandingsTable"]["StandingsLists"]:
             champions_data.append(driver)
-        return champions_data #data["MRData"]["StandingsTable"]["StandingsLists"][0]["DriverStandings"]
+        return champions_data
     except requests.RequestException as e:
         print(f"Error fetching data from Ergast API: {e}")
         return []
 
 def insert_champions_data(champions_data):
     # Create a connection
-    #connection = mysql.connector.connect(
-    #    user=username,
-    #    password=password,
-    #    host=hostname,
-    #    database=database_name)
+    connection = mysql.connector.connect(
+        user=username,
+        password=password,
+        host=hostname,
+        database=database_name)
 
     # Create a cursor
-    #cursor = connection.cursor()
+    cursor = connection.cursor()
 
     for champion in champions_data:
         year = int(champion["season"])
         for driver in champion['DriverStandings']:
             driver_name = f"{driver['Driver']['givenName']} {driver['Driver']['familyName']}"
         print(str(year) + str(' ') + driver_name)
-        #team_name = champion["Constructors"][0]["name"]
-        #cursor.execute("INSERT INTO f1_champions VALUES (?, ?, ?)", (driver_name, team_name, year))
-    #connection.commit()
-    #connection.close()
+        cursor.execute("INSERT INTO f1_champions (driver_name,year) VALUES (%s, %s)", (driver_name, year))
+    connection.commit()
+    connection.close()
 
 if __name__ == '__main__':
     create_database()
