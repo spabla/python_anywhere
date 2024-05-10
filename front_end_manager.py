@@ -1,25 +1,29 @@
 
-# A very simple Flask Hello World app for you to get started with...
-
+# The front_end_manager for handling all interactions with the front end
+import os
 from flask import Flask, render_template, request, jsonify
 from historic_data_manager.historic_data_manager import Historic_Data_Manager
+from database_manager.database_manager import Database_Manager
+
+
+os.chdir('/home/sundevp/mysite')
 
 app = Flask(__name__)
-theHistoricDataManager = Historic_Data_Manager()
+
+theDatabaseManager = Database_Manager()
+theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
 
 @app.route('/')
 def index():
+    theHistoricDataManager.updateHistoricData()
+    champion_names = theDatabaseManager.getChampionsData()
+    # Filter out repeats caused by same driver winning the championship multiple times
+    theChampions = []
+    for champion in champion_names:
+        if champion not in theChampions:
+            theChampions.append(champion)
 
-    champions_data = theHistoricDataManager.fetch_champions_data()
-    theHistoricDataManager.insert_champions_data(champions_data)
-    drivers=[]
-    for champion in champions_data:
-        for driver in champion['DriverStandings']:
-            driver_name = f"{driver['Driver']['givenName']} {driver['Driver']['familyName']}"
-            if driver_name not in drivers:
-                drivers.append(driver_name)
-
-    return render_template("index.html",drivers=drivers)
+    return render_template("index.html",drivers=theChampions)
 
 @app.route('/process_item', methods=['POST'])
 def process_item():
