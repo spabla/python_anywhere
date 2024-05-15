@@ -12,10 +12,11 @@ app = Flask(__name__)
 
 theDatabaseManager = Database_Manager()
 theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
+theHistoricDataManager.updateHistoricData()
 
 @app.route('/')
 def index():
-    theHistoricDataManager.updateHistoricData()
+
     champion_names = theDatabaseManager.getChampionsData()
     # Filter out repeats caused by same driver winning the championship multiple times
     theChampions = []
