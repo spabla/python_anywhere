@@ -10,11 +10,12 @@ class Historic_Data_Manager:
 
 
     def updateHistoricData(self):
-        champions_data = self.fetch_champions_data()
-        self.theDatabaseManager.insert_champions_data(champions_data)
+        championsData = self.obtainF1ChampionsData()
+        self.theDatabaseManager.storeF1ChampionsData(championsData)
+        circuitsData = self.obtainF1CurrentCircuitsData()
+        self.theDatabaseManager.storeF1CurrentCircuitsData(circuitsData)
 
-
-    def fetch_champions_data(self):
+    def obtainF1ChampionsData(self):
         try:
             # Ergast API URL for driver standings
             ergast_url = "http://ergast.com/api/f1/driverStandings/1.json?limit=100"
@@ -31,7 +32,7 @@ class Historic_Data_Manager:
             print(f"Error fetching data from Ergast API: {e}")
             return []
 
-    def fetch_f1_circuits(self):
+    def obtainF1CurrentCircuitsData(self):
         # Send a GET request to the Ergast API for the current season
         response = requests.get('http://ergast.com/api/f1/current.json')
 
@@ -44,8 +45,13 @@ class Historic_Data_Manager:
             races = data['MRData']['RaceTable']['Races']
 
             # Print the name, date, and circuit of each Grand Prix
+            # Populate a circuitsData dictionary as we loop through printing the data
+            circuitsData = {}
             for race in races:
+                circuitsData[race['Circuit']['circuitName']] = race['raceName']
                 print(f"Grand Prix Name: {race['raceName']}")
                 print(f"Date: {race['date']}")
                 print(f"Circuit: {race['Circuit']['circuitName']}")
                 print('---')
+
+        return circuitsData
