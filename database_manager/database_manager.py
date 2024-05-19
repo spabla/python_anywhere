@@ -188,39 +188,43 @@ class Database_Manager:
         cursor.close()
         connection.close()
 
-    def storeF1AllRaceData(self,racesData):
+    def storeF1AllRaceData(self,raceData):
 
-        # Create a connection
-        connection = mysql.connector.connect(
-            user=Database_Manager.username,
-            password=Database_Manager.password,
-            host=Database_Manager.hostname,
-            database=Database_Manager.database_name)
+        try:
+            # Create a connection
+            connection = mysql.connector.connect(
+                user=Database_Manager.username,
+                password=Database_Manager.password,
+                host=Database_Manager.hostname,
+                database=Database_Manager.database_name)
 
-        # Create a cursor
-        cursor = connection.cursor()
+            # Create a cursor
+            cursor = connection.cursor()
 
-        # loop through the race data storing it
-        for raceData in racesData:
+            print("----Race Result-----")
+            print(raceData.year)
+            print(raceData.circuit)
+            print(raceData.driver_name)
+            print(raceData.race_time)
+
             # Now get the id for the year
             sql_query = "SELECT id FROM f1_years WHERE year=(%s)"
             cursor.execute(sql_query, (raceData.year,))
             year_id = cursor.fetchone()
+
             # Now get the id for the circuit
             sql_query = "SELECT id FROM f1_current_circuits WHERE circuit_name=(%s)"
             cursor.execute(sql_query, (raceData.circuit,))
             # We will initialise circuit_id to 999 in case it is not a current circuit
             circuit_id = 999
             circuit_id = cursor.fetchone()
+
             cursor.execute("INSERT INTO f1_races (year_id,circuit_id,driver_name,race_time) VALUES (%s,%s,%s,%s)",
-            (year_id,circuit_id,raceData.driver_name,raceData.race_time))
-            print("A new data entry")
-            print(raceData.year)
-            print(raceData.circuit)
-            print(raceData.driver_name)
-            print(raceData.race_time)
+                (year_id[0],circuit_id[0],raceData.driver_name,raceData.race_time))
+
             connection.commit()
 
-        cursor.close()
-        connection.close()
-
+            cursor.close()
+            connection.close()
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")

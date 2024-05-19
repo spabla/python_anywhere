@@ -1,6 +1,7 @@
 import requests
 import sys
 import json
+import time
 
 from database_manager.database_manager import Database_Manager
 
@@ -10,12 +11,15 @@ class Historic_Data_Manager:
         self.theDatabaseManager = theDatabaseManager
 
     def updateHistoricData(self):
+        print("Getting F1 Champions Data")
         championsData = self.obtainF1ChampionsData()
         self.theDatabaseManager.storeF1ChampionsData(championsData)
+        print("Getting Current Circutits Data")
         circuitsData = self.obtainF1CurrentCircuitsData()
         self.theDatabaseManager.storeF1CurrentCircuitsData(circuitsData)
-        racesData = self.obtainF1AllRaceData()
-        self.theDatabaseManager.storeF1AllRaceData(racesData)
+        print("Getting All F1 Race Data")
+        self.obtainF1AllRaceData()
+
 
     def obtainF1ChampionsData(self):
         try:
@@ -62,6 +66,8 @@ class Historic_Data_Manager:
         # Include the circuit name in the returned data
         race_data = data["MRData"]["RaceTable"]["Races"][0]
         race_data["CircuitName"] = race_data["Circuit"]["circuitName"]
+        # The conditions of the Erast API say do not make more than 4 calls per second
+        time.sleep(0.25)
 
         return race_data
 
@@ -71,19 +77,18 @@ class Historic_Data_Manager:
         for year in range(1950, 2025):  # Assuming races have been held from 1950 to 2024
             for round in range(1, 22):  # Assuming a maximum of 21 rounds in a season
                 try:
+                    print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
                     for result in race_data["Results"]:
+                        print(f"processing result {i}")
                         # Add any historic results for current circuits to the database
                         driver_name = f"{result['Driver']['givenName']} {result['Driver']['familyName']}"
-                        race_time = f"Time: {result['Time']['millis']}"
+                        race_time = result['Time']['millis']
                         raceDataRecord = self.theDatabaseManager.RaceData_T(year,race_data['CircuitName'],driver_name,race_time)
                         racesData[i] = raceDataRecord
-                        print(raceDataRecord.year)
-                        print(raceDataRecord.circuit)
-                        print(raceDataRecord.driver_name)
-                        print(raceDataRecord.race_time)
-                        i = i+1
+                        self.theDatabaseManager.storeF1AllRaceData(raceDataRecord)
+                        i+=1
                 except Exception as e:
                     pass
-        return racesData
+
 
