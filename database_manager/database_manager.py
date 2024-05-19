@@ -188,7 +188,7 @@ class Database_Manager:
         cursor.close()
         connection.close()
 
-    def storeF1AllRaceData(self,racesData: RaceData_T):
+    def storeF1AllRaceData(self,racesData):
 
         # Create a connection
         connection = mysql.connector.connect(
