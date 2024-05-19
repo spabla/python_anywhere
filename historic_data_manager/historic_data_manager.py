@@ -75,7 +75,7 @@ class Historic_Data_Manager:
         racesData = {}
         i=0;
         for year in range(1950, 2025):  # Assuming races have been held from 1950 to 2024
-            for round in range(1, 22):  # Assuming a maximum of 21 rounds in a season
+            for round in range(1, 25):  # Assuming a maximum of 24 rounds in a season (this is what 2024 season has)
                 try:
                     print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
