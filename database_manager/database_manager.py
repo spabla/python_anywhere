@@ -18,7 +18,8 @@ class Database_Manager:
             self.race_time = race_time
 
     def __init__(self):
-        self.createDatabaseTables()
+        pass
+        #self.createDatabaseTables()
 
     def createDatabaseTables(self):
 
