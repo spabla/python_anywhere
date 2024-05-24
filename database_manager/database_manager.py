@@ -75,7 +75,7 @@ class Database_Manager:
         CREATE TABLE IF NOT EXISTS f1_races (
             id INT AUTO_INCREMENT PRIMARY KEY,
             year_id INT,
-            circuit_id INT,
+            circuit_name INT,
             driver_name VARCHAR(255),
             race_time INT,
             FOREIGN KEY(year_id) REFERENCES f1_years(id),
@@ -189,6 +189,35 @@ class Database_Manager:
         cursor.close()
         connection.close()
 
+    def getCurrentCircuitsData(self):
+        # Create a connection
+        connection = mysql.connector.connect(
+            user=Database_Manager.username,
+            password=Database_Manager.password,
+            host=Database_Manager.hostname,
+            database=Database_Manager.database_name)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        sql_query = "SELECT circuit_name FROM f1_current_circuits"
+
+        # Execute the query
+        cursor.execute(sql_query)
+
+        # Fetch all the results into a list
+        results = cursor.fetchall()
+
+        # Extract the DriverNames from the results
+        currentCircuitData = [row[0] for row in results]
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return currentCircuitData
+
+
     def storeF1AllRaceData(self,raceData):
 
         try:
@@ -229,3 +258,51 @@ class Database_Manager:
             connection.close()
         except mysql.connector.Error as err:
             print(f"Error: {err}")
+
+    def getWinningRaceTime(self,year,circuit):
+
+        # Create a connection
+        connection = mysql.connector.connect(
+            user=Database_Manager.username,
+            password=Database_Manager.password,
+            host=Database_Manager.hostname,
+            database=Database_Manager.database_name)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        # Now get the id for the year
+        sql_query = "SELECT id FROM f1_years WHERE year=(%s)"
+        cursor.execute(sql_query, (year,))
+        # Fetch result
+        year_id = cursor.fetchone()
+
+        # Now get the id for the circuit
+        sql_query = "SELECT id FROM f1_current_circuits WHERE circuit_name=(%s)"
+        cursor.execute(sql_query, (circuit,))
+        # Fetch result
+        circuit_id = cursor.fetchone()
+
+        winningRaceTime = -999
+        if circuit_id is not None and year_id is not None:
+            sql_query = "SELECT MAX(race_time) FROM f1_races WHERE year_id=(%s) AND circuit_id=(%s)"
+            # Execute the query
+            cursor.execute(sql_query, (year_id[0], circuit_id[0],))
+            # Fetch all the results into a list
+            winningRaceTime = cursor.fetchone()
+            if winningRaceTime is not None and winningRaceTime[0] is not None:
+                try:
+                    winningRaceTime = int(winningRaceTime[0])
+                except (ValueError, IndexError) as e:
+                    # Handle any conversion errors or index errors gracefully
+                    print(f"Error converting winning race time: {e}")
+                    winningRaceTime = -999
+            else:
+                winningRaceTime = -999
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        return winningRaceTime
+
