@@ -114,6 +114,9 @@ class Historic_Data_Manager:
 
                 annualDifferencesDictionary[year][circuit] = winningTimeForYear-mostRecentWinningTime
                 print(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}")
+                with open('race_time_diffs.csv', 'w') as file:
+                    # Write the formatted string to the file
+                    file.write(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
 
 
 
