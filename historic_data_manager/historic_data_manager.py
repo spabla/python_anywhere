@@ -96,25 +96,26 @@ class Historic_Data_Manager:
         currentCircuits = self.theDatabaseManager.getCurrentCircuitsData()
         # Loop through each year
         annualDifferencesDictionary = {}
-        for year in range(1950, 2025):
-            # Loop through current circuits
-            for circuit in currentCircuits:
-                winningTimeForYear = self.theDatabaseManager.getWinningRaceTime(year,circuit)
-                if winningTimeForYear == -999:
-                    continue
-                mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2024,circuit)
-                if mostRecentWinningTime == -999:
-                    # Try 2023 because the 2024 season is still in progress
-                    mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2023,circuit)
-                    if mostRecentWinningTime == -999:
+        with open('race_time_diffs.csv', 'w') as file:
+            for year in range(1950, 2025):
+                # Loop through current circuits
+                for circuit in currentCircuits:
+                    winningTimeForYear = self.theDatabaseManager.getWinningRaceTime(year,circuit)
+                    if winningTimeForYear == -999:
                         continue
+                    mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2024,circuit)
+                    if mostRecentWinningTime == -999:
+                        # Try 2023 because the 2024 season is still in progress
+                        mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2023,circuit)
+                        if mostRecentWinningTime == -999:
+                            continue
 
-                if year not in annualDifferencesDictionary:
-                    annualDifferencesDictionary[year] = {}
+                    if year not in annualDifferencesDictionary:
+                        annualDifferencesDictionary[year] = {}
 
-                annualDifferencesDictionary[year][circuit] = winningTimeForYear-mostRecentWinningTime
-                print(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}")
-                with open('race_time_diffs.csv', 'w') as file:
+                    annualDifferencesDictionary[year][circuit] = winningTimeForYear-mostRecentWinningTime
+                    print(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
+
                     # Write the formatted string to the file
                     file.write(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
 
