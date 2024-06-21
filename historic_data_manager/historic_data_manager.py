@@ -96,28 +96,46 @@ class Historic_Data_Manager:
         currentCircuits = self.theDatabaseManager.getCurrentCircuitsData()
         # Loop through each year
         annualDifferencesDictionary = {}
-        with open('race_time_diffs.csv', 'w') as file:
-            for year in range(1950, 2025):
-                # Loop through current circuits
-                for circuit in currentCircuits:
-                    winningTimeForYear = self.theDatabaseManager.getWinningRaceTime(year,circuit)
-                    if winningTimeForYear == -999:
-                        continue
-                    mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2024,circuit)
+
+        for year in range(1950, 2025):
+            # Loop through current circuits
+            for circuit in currentCircuits:
+                winningTimeForYear = self.theDatabaseManager.getWinningRaceTime(year,circuit)
+                if winningTimeForYear == -999:
+                    continue
+                mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2024,circuit)
+                if mostRecentWinningTime == -999:
+                      # Try 2023 because the 2024 season is still in progress
+                    mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2023,circuit)
                     if mostRecentWinningTime == -999:
-                        # Try 2023 because the 2024 season is still in progress
-                        mostRecentWinningTime = self.theDatabaseManager.getWinningRaceTime(2023,circuit)
-                        if mostRecentWinningTime == -999:
-                            continue
+                        continue
 
-                    if year not in annualDifferencesDictionary:
-                        annualDifferencesDictionary[year] = {}
+                if year not in annualDifferencesDictionary:
+                    annualDifferencesDictionary[year] = {}
 
-                    annualDifferencesDictionary[year][circuit] = winningTimeForYear-mostRecentWinningTime
-                    print(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
-
-                    # Write the formatted string to the file
-                    file.write(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
+                annualDifferencesDictionary[year][circuit] = winningTimeForYear-mostRecentWinningTime
+                print(f"{year},{circuit},{mostRecentWinningTime},{winningTimeForYear},{annualDifferencesDictionary[year][circuit]}\n")
 
 
+        # We will base the annual compensation value on the median annual diff for that year
+        annualCompValues = self.calculate_comp_values(annualDifferencesDictionary)
 
+        self.theDatabaseManager.storeCompValues(annualCompValues)
+
+    def calculate_comp_values(self, annualDifferencesDictionary):
+
+        annualCompValues = {}
+        # loop through all years, use the median different as the compensation value for the year
+        for year in range(1950, 2024):
+            annualDifferenesForYear = list(annualDifferencesDictionary.get(year, {}).values())
+            annualDifferenesForYear.sort()
+
+            if len(annualDifferenesForYear) % 2 == 0:
+                mid = len(annualDifferenesForYear) // 2
+                compValueForYear = (annualDifferenesForYear[mid - 1] + annualDifferenesForYear[mid]) / 2
+            else:
+                compValueForYear = annualDifferenesForYear[len(annualDifferenesForYear) // 2]
+
+            annualCompValues[year] = compValueForYear
+
+        return annualCompValues

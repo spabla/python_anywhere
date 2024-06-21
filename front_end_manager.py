@@ -13,7 +13,7 @@ app = Flask(__name__)
 theDatabaseManager = Database_Manager()
 theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
 #theHistoricDataManager.updateHistoricData()
-theHistoricDataManager.calculateAnnualRaceTimeCompValues()
+
 
 @app.route('/')
 def index():
@@ -37,5 +37,5 @@ def process_item():
 
 if __name__ == '__main__':
     pass
-    #app.run(debug=True)
+    app.run(debug=True)
 

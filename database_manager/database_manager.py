@@ -24,6 +24,7 @@ class Database_Manager:
     def createDatabaseTables(self):
 
         # Drop the current tables, they must be dropped in a certain order due to dependencies
+        self.execute_sql("DROP TABLE IF EXISTS annual_compensation_values")
         self.execute_sql("DROP TABLE IF EXISTS f1_races")
         self.execute_sql("DROP TABLE IF EXISTS f1_world_champions")
         self.execute_sql("DROP TABLE IF EXISTS f1_years")
@@ -80,6 +81,18 @@ class Database_Manager:
             race_time INT,
             FOREIGN KEY(year_id) REFERENCES f1_years(id),
             FOREIGN KEY(circuit_id) REFERENCES f1_current_circuits(id)
+        )
+        """
+        # Create the table
+        self.execute_sql(create_table_query)
+
+        # Define the SQL query to create the table
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS annual_compensation_values (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            year_id INT,
+            comp_value INT,
+            FOREIGN KEY(year_id) REFERENCES f1_years(id)
         )
         """
         # Create the table
@@ -306,3 +319,26 @@ class Database_Manager:
 
         return winningRaceTime
 
+    def storeCompValues(self,comp_value_data):
+        # Create a connection
+        connection = mysql.connector.connect(
+            user=Database_Manager.username,
+            password=Database_Manager.password,
+            host=Database_Manager.hostname,
+            database=Database_Manager.database_name)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        for year, comp_value in comp_value_data.items():
+
+            # Now get the id for the year
+            sql_query = "SELECT id FROM f1_years WHERE year=(%s)"
+            cursor.execute(sql_query, (year,))
+            # Fetch result
+            year_id = cursor.fetchone()
+            cursor.execute("INSERT INTO annual_compensation_values  (year_id,comp_value) VALUES (%s,%s)", (year_id[0],int(comp_value)))
+            connection.commit()
+
+        cursor.close
+        connection.close()
