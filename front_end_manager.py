@@ -4,7 +4,7 @@ import os
 from flask import Flask, render_template, request, jsonify
 from historic_data_manager.historic_data_manager import Historic_Data_Manager
 from database_manager.database_manager import Database_Manager
-
+from simulated_race_manager.simulated_race_manager import Simulated_Race_Manager
 
 os.chdir('/home/sundevp/mysite')
 
@@ -13,6 +13,7 @@ app = Flask(__name__)
 theDatabaseManager = Database_Manager()
 theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
 #theHistoricDataManager.updateHistoricData()
+theSimulatedRaceManager = Simulated_Race_Manager(theDatabaseManager)
 
 
 @app.route('/')

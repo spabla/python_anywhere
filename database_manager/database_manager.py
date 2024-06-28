@@ -76,7 +76,7 @@ class Database_Manager:
         CREATE TABLE IF NOT EXISTS f1_races (
             id INT AUTO_INCREMENT PRIMARY KEY,
             year_id INT,
-            circuit_name INT,
+            circuit_id INT,
             driver_name VARCHAR(255),
             race_time INT,
             FOREIGN KEY(year_id) REFERENCES f1_years(id),
@@ -221,14 +221,14 @@ class Database_Manager:
         # Fetch all the results into a list
         results = cursor.fetchall()
 
-        # Extract the DriverNames from the results
-        currentCircuitData = [row[0] for row in results]
+        # Extract the current circuit data from the results
+        currentCircuitsData = [row[0] for row in results]
 
         # Close the cursor and connection
         cursor.close()
         connection.close()
 
-        return currentCircuitData
+        return currentCircuitsData
 
 
     def storeF1AllRaceData(self,raceData):
@@ -318,6 +318,46 @@ class Database_Manager:
         connection.close()
 
         return winningRaceTime
+
+    def getRaceData(self,circuit,driverName):
+
+        # Create a connection
+        connection = mysql.connector.connect(
+            user=Database_Manager.username,
+            password=Database_Manager.password,
+            host=Database_Manager.hostname,
+            database=Database_Manager.database_name)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        # Now get the id for the circuit
+        sql_query = "SELECT id FROM f1_current_circuits WHERE circuit_name=(%s)"
+        cursor.execute(sql_query, (circuit,))
+        # Fetch result
+        circuit_id = cursor.fetchone()
+
+        sql_query = "SELECT f1_years.year, f1_current_circuits.circuit_name, f1_races.driver_name, f1_races.race_time \
+                    FROM f1_races  \
+                    JOIN f1_years on f1_races.year_id = f1_years.id \
+                    JOIN f1_current_circuits on f1_races.circuit_id= f1_current_circuits.id \
+                    WHERE driver_name=(%s) AND circuit_id=(%s)"
+
+        cursor.execute(sql_query, (driverName, circuit_id[0],))
+
+         # Fetch all the results into a list
+        results = cursor.fetchall()
+
+        # Close the cursor and connection
+        cursor.close()
+        connection.close()
+
+        raceData = []
+        for row in results:
+            raceDataDictionary = {"year": row[0],"circuit": row[1],"driver": row[2],"time":row[3]}
+            raceData.append(raceDataDictionary)
+
+        return raceData
 
     def storeCompValues(self,comp_value_data):
         # Create a connection
