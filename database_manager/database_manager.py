@@ -382,3 +382,31 @@ class Database_Manager:
 
         cursor.close
         connection.close()
+
+    def getYearComp(self, year):
+        connection = mysql.connector.connect(
+        user=Database_Manager.username,
+        password=Database_Manager.password,
+        host=Database_Manager.hostname,
+        database=Database_Manager.database_name)
+
+        # Create a cursor
+        cursor = connection.cursor()
+
+        # Now get the id for the year
+        sql_query = "SELECT id FROM f1_years WHERE year=(%s)"
+        cursor.execute(sql_query, (year,))
+        # Fetch result
+        year_id = cursor.fetchone()
+
+        # Now get the comp value for the year passed in
+        sql_query = "SELECT comp_value FROM annual_compensation_values WHERE year_id=(%s)"
+        cursor.execute(sql_query, (year_id[0],))
+
+        # Fetch result
+        comp_value = cursor.fetchone()
+
+        cursor.close
+        connection.close()
+
+        return comp_value
