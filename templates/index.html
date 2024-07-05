@@ -60,7 +60,7 @@
         {% endfor %}
     </select>
 
-    <button>Lets GO Simulated Racing</button>
+    <button onclick="goSimulatedRacing()">Lets go Simulated Racing</button>
 
     <table>
         <tr>
@@ -127,6 +127,37 @@
                 console.error('Error sending data to backend:', error);
             }
         });
+    </script>
+    <script>
+        async function goSimulatedRacing()
+        {
+            const driver1Combo = document.getElementById("driver1_dropdown");
+            const driver2Combo = document.getElementById("driver2_dropdown");
+            console.log(driver1Combo.value);
+            console.log(driver2Combo.value);
+            driver1Value = driver1Combo.value;
+            driver2Value = driver2Combo.value;
+            try
+            {
+                const response = await fetch('/runSimulatedRaces', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    "driver1": driver1Value,
+                    "driver2": driver2Value,
+                  }),
+                });
+                const data = await response.json();
+                window.alert(data);
+                console.log(data);
+            }
+            catch (error)
+            {
+                console.error('Error sending data to backend:', error);
+            }
+        }
     </script>
 </body>
 </html>

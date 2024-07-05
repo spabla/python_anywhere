@@ -15,7 +15,6 @@ theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
 #theHistoricDataManager.updateHistoricData()
 theSimulatedRaceManager = Simulated_Race_Manager(theDatabaseManager)
 
-
 @app.route('/')
 def index():
     champion_names = theDatabaseManager.getChampionsData()
@@ -34,6 +33,15 @@ def process_item():
     # You can replace this with your actual backend logic
     return jsonify({'message': f'Selected item: {selected_item}'})
 
+@app.route('/runSimulatedRaces', methods=['POST'])
+def runSimulatedRaces():
+
+    driver1 = request.json.get('driver1')
+    driver2 = request.json.get('driver2')
+
+    simulatedRaceData = theSimulatedRaceManager.runSimulatedRaces(driver1,driver2)
+
+    return jsonify(simulatedRaceData)
 
 
 if __name__ == '__main__':
