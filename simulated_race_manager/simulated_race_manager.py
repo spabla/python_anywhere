@@ -59,7 +59,7 @@ class Simulated_Race_Manager:
                                       "Driver 1 Best Time after Comp": driver1BestTimeAfterComp,
                                       "Driver 2 Best Year":driver2BestRaceYear,
                                       "Driver 2 Best Time":driver2BestTime,
-                                      "Driver 2 Best Time after Comp": driver1BestTimeAfterComp,
+                                      "Driver 2 Best Time after Comp": driver2BestTimeAfterComp,
                                       "Race Winner after Comp": raceWinner
                                       }
 
