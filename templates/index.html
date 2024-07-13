@@ -159,11 +159,13 @@
                     }
 
                     const row = document.createElement('tr');
+                    const driver1TimeFormatted = new Date(driver1BestTimeAfterComp).toISOString().substr(11, 8)
+                    const driver2TimeFormatted = new Date(driver2BestTimeAfterComp).toISOString().substr(11, 8)
                     row.innerHTML = `
                         <td style="border: 1px solid black;">"Unknown"</td>
                         <td style="border: 1px solid black;">${circuit}</td>
-                        <td style="border: 1px solid black;">${driver1BestTimeAfterComp}</td>
-                        <td style="border: 1px solid black;">${driver2BestTimeAfterComp}</td>
+                        <td style="border: 1px solid black;">${driver1TimeFormatted}</td>
+                        <td style="border: 1px solid black;">${driver2TimeFormatted}</td>
                         <td style="border: 1px solid black;">${raceWinner}</td>
                     `;
                     tableBody.appendChild(row);
