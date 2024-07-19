@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Time Rationale</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Driver Time Rationale</h1>
+        <p id="rationale"></p>
+        <a href="javascript:history.back()" class="back-button">Back</a>
+    </div>
+
+    <script>
+        // Function to get URL parameters
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                circuit: params.get('circuit'),
+                driver1Value: params.get('driver1Value'),
+                driver1BestYear: params.get('driver1BestYear'),
+                driver1BestTime: params.get('driver1BestTime'),
+                driver1BestTimeAfterComp: params.get('driver1BestTimeAfterComp'),
+                driver2Value: params.get('driver2Value'),
+                driver2BestYear: params.get('driver2BestYear'),
+                driver2BestTime: params.get('driver2BestTime'),
+                driver2BestTimeAfterComp: params.get('driver2BestTimeAfterComp')
+            };
+        }
+
+        // Get the parameters and display the rationale
+        const params = getQueryParams();
+        let rationaleText = "";
+        if (params.driver1Value !== null)
+        {
+            rationaleText = `${params.driver1Value} produced his best time at ${params.circuit} in ${params.driver1BestYear}. This time in milliseconds was ${params.driver1BestTime}, a compensation factor of ${params.driver1BestTime - params.driver1BestTimeAfterComp} has been applied to get the simulated race time.`;
+        }
+        else
+        {
+            rationaleText = `${params.driver2Value} produced his best time at ${params.circuit} in ${params.driver2BestYear}. This time in milliseconds was ${params.driver2BestTime}, a compensation factor of ${params.driver2BestTime - params.driver2BestTimeAfterComp} has been applied to get the simulated race time.`;
+        }
+        document.getElementById('rationale').innerText = rationaleText;
+    </script>
+</body>
+</html>

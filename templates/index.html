@@ -145,7 +145,11 @@
 
                 data.forEach(entry => {
                     let circuit = entry['circuit'];
+                    let driver1BestYear = entry['Driver 1 Best Year'];
+                    let driver1BestTime = entry['Driver 1 Best Time'];
                     let driver1BestTimeAfterComp = entry['Driver 1 Best Time after Comp'];
+                    let driver2BestYear = entry['Driver 2 Best Year'];
+                    let driver2BestTime = entry['Driver 2 Best Time'];
                     let driver2BestTimeAfterComp = entry['Driver 2 Best Time after Comp'];
                     let raceWinner = entry['Race Winner after Comp'];
 
@@ -164,8 +168,21 @@
                     row.innerHTML = `
                         <td style="border: 1px solid black;">"Unknown"</td>
                         <td style="border: 1px solid black;">${circuit}</td>
-                        <td style="border: 1px solid black;">${driver1TimeFormatted}</td>
-                        <td style="border: 1px solid black;">${driver2TimeFormatted}</td>
+                        <td style="border: 1px solid black;">
+                            <a href="driver_time_rationale.html?driver1Value=${driver1Value}
+                            &circuit=${circuit}
+                            &driver1BestYear=${driver1BestYear}
+                            &driver1BestTime=${driver1BestTime}
+                            &driver1BestTimeAfterComp=${driver1BestTimeAfterComp}"> ${driver1TimeFormatted}</a>
+                        </td>
+                        <td style="border: 1px solid black;">
+                            <a href="driver_time_rationale.html?driver2Value=${driver2Value} \
+                            &circuit=${circuit} \
+                            &driver2BestYear=${driver2BestYear} \
+                            &driver2BestTime=${driver2BestTime} \
+                            &driver2BestTimeAfterComp=${driver2BestTimeAfterComp}">
+                            ${driver2TimeFormatted}</a>
+                        </td>
                         <td style="border: 1px solid black;">${raceWinner}</td>
                     `;
                     tableBody.appendChild(row);

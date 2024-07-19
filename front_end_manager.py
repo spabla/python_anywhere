@@ -26,6 +26,10 @@ def index():
 
     return render_template("index.html",drivers=theChampions)
 
+@app.route('/driver_time_rationale.html')
+def driver_time_rationale():
+    return render_template('driver_time_rationale.html')
+
 @app.route('/process_item', methods=['POST'])
 def process_item():
     selected_item = request.form.get('selected_item')
