@@ -17,6 +17,10 @@ theSimulatedRaceManager = Simulated_Race_Manager(theDatabaseManager)
 
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+@app.route('/champion_of_champions.html')
+def champion_of_champions():
     champion_names = theDatabaseManager.getChampionsData()
     # Filter out repeats caused by same driver winning the championship multiple times
     theChampions = []
@@ -24,11 +28,15 @@ def index():
         if champion not in theChampions:
             theChampions.append(champion)
 
-    return render_template("index.html",drivers=theChampions)
+    return render_template("champion_of_champions.html",drivers=theChampions)
 
 @app.route('/driver_time_rationale.html')
 def driver_time_rationale():
     return render_template('driver_time_rationale.html')
+
+@app.route('/top_trumps.html')
+def top_trumps():
+    return render_template('top_trumps.html')
 
 @app.route('/process_item', methods=['POST'])
 def process_item():
