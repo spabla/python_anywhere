@@ -1,0 +1,21 @@
+/* styles.css */
+select {
+    margin-right: 50px;
+    margin-bottom: 20px;
+    width: 200px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0 5em;
+    text-align: center;
+    vertical-align: middle;
+}
+
+tr a {
+    text-decoration: underline;
+    color: blue;
+}
