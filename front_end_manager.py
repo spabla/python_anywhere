@@ -12,7 +12,6 @@ app = Flask(__name__)
 
 theDatabaseManager = Database_Manager()
 theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
-#theHistoricDataManager.updateHistoricData()
 theSimulatedRaceManager = Simulated_Race_Manager(theDatabaseManager)
 
 @app.route('/')
@@ -38,12 +37,17 @@ def driver_time_rationale():
 def top_trumps():
     return render_template('top_trumps.html')
 
-@app.route('/process_item', methods=['POST'])
-def process_item():
-    selected_item = request.form.get('selected_item')
-    # Process the selected item (e.g., perform some action or return a response)
-    # You can replace this with your actual backend logic
-    return jsonify({'message': f'Selected item: {selected_item}'})
+@app.route('/updateLocalDatabase', methods=['POST'])
+def updateLocalDatabase():
+    #Todo uncomment this following debug
+    #theDatabaseManager.createDatabaseTables()
+    theHistoricDataManager.obtainF1AllRaceData()
+
+@app.route('/getPprogress', methods=['POST'])
+def getProgress():
+    theProgress = theHistoricDataManager.getProgress();
+    return jsonify({'progress': theProgress})
+
 
 @app.route('/runSimulatedRaces', methods=['POST'])
 def runSimulatedRaces():

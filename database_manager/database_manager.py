@@ -19,7 +19,6 @@ class Database_Manager:
 
     def __init__(self):
         pass
-        #self.createDatabaseTables()
 
     def createDatabaseTables(self):
 
