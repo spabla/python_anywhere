@@ -1,6 +1,6 @@
 
 # The front_end_manager for handling all interactions with the front end
-import os
+import os, threading
 from flask import Flask, render_template, request, jsonify
 from historic_data_manager.historic_data_manager import Historic_Data_Manager
 from database_manager.database_manager import Database_Manager
@@ -41,9 +41,11 @@ def top_trumps():
 def updateLocalDatabase():
     #Todo uncomment this following debug
     #theDatabaseManager.createDatabaseTables()
-    theHistoricDataManager.obtainF1AllRaceData()
+    updateLocalDatabaseThread = threading.Thread(target=theHistoricDataManager.obtainF1AllRaceData)
+    updateLocalDatabaseThread.start()
+    return jsonify({"mesaage": "Update Started"})
 
-@app.route('/getPprogress', methods=['POST'])
+@app.route('/getProgress', methods=['POST'])
 def getProgress():
     theProgress = theHistoricDataManager.getProgress();
     return jsonify({'progress': theProgress})

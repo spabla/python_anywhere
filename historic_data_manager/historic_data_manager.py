@@ -3,7 +3,7 @@ import sys
 import json
 import time
 
-from database_manager.database_manager import Database_Manager
+#from database_manager.database_manager import Database_Manager
 
 class Historic_Data_Manager:
 
@@ -86,6 +86,8 @@ class Historic_Data_Manager:
                 try:
                     print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
+                    theProgressCount = theProgressCount + 1
+                    self.theProgress = theProgressCount# (theProgressCount/MAX_PROGRESS) * 100
                     for result in race_data["Results"]:
                         print(f"processing result {i}")
                         # Add any historic results for current circuits to the database
@@ -96,8 +98,7 @@ class Historic_Data_Manager:
                         # Todo - uncomment this following debug.  Only commented out to prevent trashing database
                         # self.theDatabaseManager.storeF1AllRaceData(raceDataRecord)
                         i+=1
-                        theProgressCount = theProgressCount + 1
-                        self.theProgress = (theProgressCount/MAX_PROGRESS) * 100
+                        pring(self.theProgress)
                 except Exception:
                     pass
 
@@ -149,3 +150,6 @@ class Historic_Data_Manager:
             annualCompValues[year] = compValueForYear
 
         return annualCompValues
+
+
+

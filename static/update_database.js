@@ -26,7 +26,7 @@ async function pollProgress()
 {
     try
     {
-        const progressResponse = await fetch('/getPprogress'); // Your custom route
+        const progressResponse = await fetch('/getProgress'); // Your custom route
         if (progressResponse.ok)
         {
             const { progress } = await progressResponse.json();
