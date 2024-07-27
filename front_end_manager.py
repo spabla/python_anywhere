@@ -1,7 +1,7 @@
 
 # The front_end_manager for handling all interactions with the front end
 import os, threading
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,redirect, url_for, session, flash
 from historic_data_manager.historic_data_manager import Historic_Data_Manager
 from database_manager.database_manager import Database_Manager
 from simulated_race_manager.simulated_race_manager import Simulated_Race_Manager
@@ -9,6 +9,10 @@ from simulated_race_manager.simulated_race_manager import Simulated_Race_Manager
 os.chdir('/home/sundevp/mysite')
 
 app = Flask(__name__)
+
+# Admin password
+app.secret_key = 'your_secret_key'
+ADMIN_PASSWORD = 'admin123'
 
 theDatabaseManager = Database_Manager()
 theHistoricDataManager = Historic_Data_Manager(theDatabaseManager)
@@ -36,6 +40,31 @@ def driver_time_rationale():
 @app.route('/top_trumps.html')
 def top_trumps():
     return render_template('top_trumps.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        password = request.form['password']
+        if password == ADMIN_PASSWORD:
+            session['admin'] = True
+            return redirect(url_for('admin_only'))
+        else:
+            flash('Incorrect password')
+    return render_template('login.html')
+
+@app.route('/admin_only.html')
+def admin_only():
+    if 'admin' in session:
+        return render_template('admin_only.html')
+    else:
+        flash('You must be logged in to view this page.')
+        return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    session.pop('admin', None)
+    flash('You have been logged out.')
+    return redirect(url_for('index'))
 
 @app.route('/updateLocalDatabase', methods=['POST'])
 def updateLocalDatabase():
