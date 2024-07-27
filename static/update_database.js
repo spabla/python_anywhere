@@ -26,14 +26,14 @@ async function pollProgress()
 {
     try
     {
-        const progressResponse = await fetch('/getProgress'); // Your custom route
+        const progressResponse = await fetch('/getProgress', { method: 'POST' }); // Your custom route
         if (progressResponse.ok)
         {
             const { progress } = await progressResponse.json();
             progressBar.value = progress;
             if (progress < 100)
             {
-                getTimeout(pollProgress, 1000); // Poll every second
+                setTimeout(pollProgress, 1000); // Poll every second
             }
             else
             {
