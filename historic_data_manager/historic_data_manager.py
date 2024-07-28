@@ -9,12 +9,10 @@ class Historic_Data_Manager:
 
     def __init__(self,theDatabaseManager):
         self.theDatabaseManager = theDatabaseManager
-        self.theProgressGettingChampionsData = 0
-        self.theProgressCircuitsData = 0
         self.theProgressGettingRaceData = 0
 
     def getProgress(self):
-        return self.theProgressGettingChampionsData
+        return self.theProgressGettingRaceData
 
     def updateHistoricData(self):
         print("Getting F1 Champions Data")
@@ -37,16 +35,9 @@ class Historic_Data_Manager:
             data = response.json()
 
             champions_data = []
-            MAX_PROGRESS = len(data["MRData"]["StandingsTable"]["StandingsLists"])
-            theProgressCount = 0;
-            self.theProgress = 0
+
             for driver in data["MRData"]["StandingsTable"]["StandingsLists"]:
                 champions_data.append(driver)
-                theProgressCount = theProgressCount+1
-                if MAX_PROGRESS > 0:
-                    self.theProgressGettingChampionsData = (theProgressCount/MAX_PROGRESS) * 100
-                else:
-                    self.theProgressGettingChampionsData = 100
 
             return champions_data
         except requests.RequestException as e:
@@ -68,13 +59,10 @@ class Historic_Data_Manager:
             # Print the name, date, and circuit of each Grand Prix
             # Populate a circuitsData dictionary as we loop through printing the data
             circuitsData = {}
-            MAX_PROGRESS = len(races)
-            theProgressCount = 0;
-            self.theProgress = 0
+
             for race in races:
                 circuitsData[race['Circuit']['circuitName']] = race['raceName']
-                theProgressCount = theProgressCount + 1
-                self.theProgressGettingCircuitsData = (theProgressCount/MAX_PROGRESS) * 100
+
         return circuitsData
 
     def obtainF1RaceData(self,year,round):
@@ -102,7 +90,7 @@ class Historic_Data_Manager:
                     print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
                     theProgressCount = theProgressCount + 1
-                    self.theProgressGettingRaceData = theProgressCount# (theProgressCount/MAX_PROGRESS) * 100
+                    self.theProgressGettingRaceData = (theProgressCount/MAX_PROGRESS) * 100
                     for result in race_data["Results"]:
                         print(f"processing result {i}")
                         # Add any historic results for current circuits to the database

@@ -70,8 +70,12 @@ def logout():
 def updateLocalDatabase():
     #Todo uncomment this following debug
     #theDatabaseManager.createDatabaseTables()
-    updateLocalDatabaseThread = threading.Thread(target=theHistoricDataManager.obtainF1ChampionsData)
-    updateLocalDatabaseThread.start()
+    updateLocalDatabaseForChampionsDataThread = threading.Thread(target=theHistoricDataManager.obtainF1ChampionsData)
+    updateLocalDatabaseForChampionsDataThread.start()
+    updateLocalDatabaseForCircuitsDataThread = threading.Thread(target=theHistoricDataManager.obtainF1CurrentCircuitsData)
+    updateLocalDatabaseForCircuitsDataThread.start()
+    updateLocalDatabaseForRaceDataThread = threading.Thread(target=theHistoricDataManager.obtainF1AllRaceData)
+    updateLocalDatabaseForRaceDataThread.start()
     return jsonify({"mesaage": "Update Started"})
 
 @app.route('/getProgress', methods=['POST'])
