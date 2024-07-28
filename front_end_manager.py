@@ -70,7 +70,7 @@ def logout():
 def updateLocalDatabase():
     #Todo uncomment this following debug
     #theDatabaseManager.createDatabaseTables()
-    updateLocalDatabaseThread = threading.Thread(target=theHistoricDataManager.obtainF1AllRaceData)
+    updateLocalDatabaseThread = threading.Thread(target=theHistoricDataManager.obtainF1ChampionsData)
     updateLocalDatabaseThread.start()
     return jsonify({"mesaage": "Update Started"})
 

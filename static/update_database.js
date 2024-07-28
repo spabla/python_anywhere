@@ -35,10 +35,6 @@ async function pollProgress()
             {
                 setTimeout(pollProgress, 1000); // Poll every second
             }
-            else
-            {
-                console.error('Error fetching progress');
-            }
         }
     }
     catch (error)

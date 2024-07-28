@@ -9,20 +9,22 @@ class Historic_Data_Manager:
 
     def __init__(self,theDatabaseManager):
         self.theDatabaseManager = theDatabaseManager
-        self.theProgress = 0
+        self.theProgressGettingChampionsData = 0
+        self.theProgressCircuitsData = 0
+        self.theProgressGettingRaceData = 0
 
     def getProgress(self):
-        return self.theProgress
+        return self.theProgressGettingChampionsData
 
     def updateHistoricData(self):
         print("Getting F1 Champions Data")
         championsData = self.obtainF1ChampionsData()
-        self.theDatabaseManager.storeF1ChampionsData(championsData)
+        # self.theDatabaseManager.storeF1ChampionsData(championsData)
         print("Getting Current Circutits Data")
         circuitsData = self.obtainF1CurrentCircuitsData()
-        self.theDatabaseManager.storeF1CurrentCircuitsData(circuitsData)
+        # self.theDatabaseManager.storeF1CurrentCircuitsData(circuitsData)
         print("Getting All F1 Race Data")
-        self.obtainF1AllRaceData()
+        self.obtainF1AllRaceData() # Note for this case, the storing of data is handled in the function
 
 
     def obtainF1ChampionsData(self):
@@ -35,8 +37,17 @@ class Historic_Data_Manager:
             data = response.json()
 
             champions_data = []
+            MAX_PROGRESS = len(data["MRData"]["StandingsTable"]["StandingsLists"])
+            theProgressCount = 0;
+            self.theProgress = 0
             for driver in data["MRData"]["StandingsTable"]["StandingsLists"]:
                 champions_data.append(driver)
+                theProgressCount = theProgressCount+1
+                if MAX_PROGRESS > 0:
+                    self.theProgressGettingChampionsData = (theProgressCount/MAX_PROGRESS) * 100
+                else:
+                    self.theProgressGettingChampionsData = 100
+
             return champions_data
         except requests.RequestException as e:
             print(f"Error fetching data from Ergast API: {e}")
@@ -57,9 +68,13 @@ class Historic_Data_Manager:
             # Print the name, date, and circuit of each Grand Prix
             # Populate a circuitsData dictionary as we loop through printing the data
             circuitsData = {}
+            MAX_PROGRESS = len(races)
+            theProgressCount = 0;
+            self.theProgress = 0
             for race in races:
                 circuitsData[race['Circuit']['circuitName']] = race['raceName']
-
+                theProgressCount = theProgressCount + 1
+                self.theProgressGettingCircuitsData = (theProgressCount/MAX_PROGRESS) * 100
         return circuitsData
 
     def obtainF1RaceData(self,year,round):
@@ -87,7 +102,7 @@ class Historic_Data_Manager:
                     print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
                     theProgressCount = theProgressCount + 1
-                    self.theProgress = theProgressCount# (theProgressCount/MAX_PROGRESS) * 100
+                    self.theProgressGettingRaceData = theProgressCount# (theProgressCount/MAX_PROGRESS) * 100
                     for result in race_data["Results"]:
                         print(f"processing result {i}")
                         # Add any historic results for current circuits to the database
@@ -98,7 +113,7 @@ class Historic_Data_Manager:
                         # Todo - uncomment this following debug.  Only commented out to prevent trashing database
                         # self.theDatabaseManager.storeF1AllRaceData(raceDataRecord)
                         i+=1
-                        pring(self.theProgress)
+                        print(self.theProgress)
                 except Exception:
                     pass
 
