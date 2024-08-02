@@ -1,6 +1,4 @@
-const updateLocalDatabaseButton = document.getElementById('updateLocalDatabase');
-const progressBar = document.getElementById('progressBar');
-
+const updateLocalDatabaseButton = document.getElementById('updateLocalDatabase')
 updateLocalDatabaseButton.addEventListener('click', async () => {
     try
     {
@@ -10,6 +8,8 @@ updateLocalDatabaseButton.addEventListener('click', async () => {
             // Process started successfully
             // Poll the backend for progress updates
             pollProgress();
+
+            updateLocalDatabaseButton.disabled = true; // Disable the button
         }
         else
         {
@@ -30,10 +30,16 @@ async function pollProgress()
         if (progressResponse.ok)
         {
             const { progress } = await progressResponse.json();
-            progressBar.value = progress;
+            const progressBar = document.getElementById('progressBar')
+            progressBar.value = progress/100;
             if (progress < 100)
             {
                 setTimeout(pollProgress, 1000); // Poll every second
+            }
+            else
+            {
+                const updateLocalDatabaseButton = document.getElementById('updateLocalDatabase')
+                updateLocalDatabaseButton.disabled = false; // enable the button
             }
         }
     }

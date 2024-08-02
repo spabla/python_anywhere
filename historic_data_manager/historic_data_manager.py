@@ -81,7 +81,7 @@ class Historic_Data_Manager:
     def obtainF1AllRaceData(self):
         racesData = {}
         i=0;
-        self.theProgress = 0
+        self.theProgressGettingRaceData = 0
         theProgressCount = 0
         MAX_PROGRESS = 1875 # This is based on 75 years x 25 rounds
         for year in range(1950, 2025):  # Assuming races have been held from 1950 to 2024

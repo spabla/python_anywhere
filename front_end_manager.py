@@ -10,6 +10,14 @@ os.chdir('/home/sundevp/mysite')
 
 app = Flask(__name__)
 
+from enum import Enum
+
+class Website_Mode(Enum):
+    OPERATIONAL = 1
+    MAINTAINANCE = 2
+
+theWebsiteMode = Website_Mode.OPERATIONAL
+
 # Admin password
 app.secret_key = 'your_secret_key'
 ADMIN_PASSWORD = 'admin123'
@@ -24,14 +32,18 @@ def index():
 
 @app.route('/champion_of_champions.html')
 def champion_of_champions():
-    champion_names = theDatabaseManager.getChampionsData()
-    # Filter out repeats caused by same driver winning the championship multiple times
-    theChampions = []
-    for champion in champion_names:
-        if champion not in theChampions:
-            theChampions.append(champion)
 
-    return render_template("champion_of_champions.html",drivers=theChampions)
+    if theWebsiteMode == Website_Mode.OPERATIONAL:
+        champion_names = theDatabaseManager.getChampionsData()
+        # Filter out repeats caused by same driver winning the championship multiple times
+        theChampions = []
+        for champion in champion_names:
+            if champion not in theChampions:
+                theChampions.append(champion)
+
+        return render_template("champion_of_champions.html",drivers=theChampions)
+    else:
+        return "Sorry, the website is currently undergoing maintenance. Please try again later.", 503
 
 @app.route('/driver_time_rationale.html')
 def driver_time_rationale():
@@ -55,7 +67,8 @@ def login():
 @app.route('/admin_only.html')
 def admin_only():
     if 'admin' in session:
-        return render_template('admin_only.html')
+        global theWebsiteMode
+        return render_template('admin_only.html',mode=theWebsiteMode)
     else:
         flash('You must be logged in to view this page.')
         return redirect(url_for('login'))
@@ -69,6 +82,9 @@ def logout():
 @app.route('/updateLocalDatabase', methods=['POST'])
 def updateLocalDatabase():
     #Todo uncomment this following debug
+    # We are going to be dropping tables etc, so put the website into maintenance mode to prevent users
+    global theWebsiteMode
+    theWebsiteMode = Website_Mode.MAINTAINANCE
     #theDatabaseManager.createDatabaseTables()
     updateLocalDatabaseForChampionsDataThread = threading.Thread(target=theHistoricDataManager.obtainF1ChampionsData)
     updateLocalDatabaseForChampionsDataThread.start()
@@ -81,6 +97,11 @@ def updateLocalDatabase():
 @app.route('/getProgress', methods=['POST'])
 def getProgress():
     theProgress = theHistoricDataManager.getProgress();
+    # Once progress reaches 100% we can put the website back into an operational mode
+    if theProgress >= 100:
+        global theWebsiteMode
+        theWebsiteMode = Website_Mode.OPERATIONAL
+
     return jsonify({'progress': theProgress})
 
 

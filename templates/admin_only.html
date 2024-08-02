@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fantasy Formula 1</title>
     <link rel="stylesheet" href="static/styles.css">
-    <script src="static/update_database.js" defer></script>
 </head>
 <body>
     <h1>Welcome to the Website Admin Page</h1>
+
     <button id="updateLocalDatabase">Update Local Database</button>
+    <script src="static/update_database.js"></script>
+    <script>
+        var mode = '{{mode}}';
+        if (mode === 'Website_Mode.MAINTAINANCE')
+        {
+            const updateLocalDatabaseButton = document.getElementById('updateLocalDatabase')
+            updateLocalDatabaseButton.disabled = true;
+            pollProgress();
+        }
+    </script>
     <progress id="progressBar" value="0" max="100" class="full-width"></progress>
     <div></div><a href="{{ url_for('logout') }}">Logout</a></div>
+
 </body>
 </html>
