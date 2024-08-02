@@ -31,7 +31,7 @@ async function pollProgress()
         {
             const { progress } = await progressResponse.json();
             const progressBar = document.getElementById('progressBar')
-            progressBar.value = progress/100;
+            progressBar.value = progress;
             if (progress < 100)
             {
                 setTimeout(pollProgress, 1000); // Poll every second
