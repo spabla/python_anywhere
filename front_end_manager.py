@@ -97,6 +97,12 @@ def updateLocalDatabase():
 @app.route('/getProgress', methods=['POST'])
 def getProgress():
     theProgress = theHistoricDataManager.getProgress();
+    if not hasattr(getProgress, 'counter'):
+        getProgress.counter = 0
+    getProgress.counter += 1
+    if (getProgress.counter > 60):
+        print(f"Progress =  {theProgress}%")
+        getProgress.counter = 0
     # Once progress reaches 100% we can put the website back into an operational mode
     if theProgress >= 100:
         global theWebsiteMode
@@ -114,9 +120,4 @@ def runSimulatedRaces():
     simulatedRaceData = theSimulatedRaceManager.runSimulatedRaces(driver1,driver2)
 
     return jsonify(simulatedRaceData)
-
-
-if __name__ == '__main__':
-    pass
-    app.run(debug=True)
 

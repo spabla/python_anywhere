@@ -79,29 +79,24 @@ class Historic_Data_Manager:
         return race_data
 
     def obtainF1AllRaceData(self):
-        racesData = {}
-        i=0;
         self.theProgressGettingRaceData = 0
         theProgressCount = 0
         MAX_PROGRESS = 1875 # This is based on 75 years x 25 rounds
         for year in range(1950, 2025):  # Assuming races have been held from 1950 to 2024
             for round in range(1, 25):  # Assuming a maximum of 24 rounds in a season (this is what 2024 season has)
                 try:
-                    print(f"requesting data for {year} round {round}")
+                    #print(f"requesting data for {year} round {round}")
                     race_data = self.obtainF1RaceData(year, round)
+                    #print(f"returned after requesting data for {year} round {round}")
                     theProgressCount = theProgressCount + 1
                     self.theProgressGettingRaceData = (theProgressCount/MAX_PROGRESS) * 100
                     for result in race_data["Results"]:
-                        print(f"processing result {i}")
                         # Add any historic results for current circuits to the database
                         driver_name = f"{result['Driver']['givenName']} {result['Driver']['familyName']}"
                         race_time = result['Time']['millis']
                         raceDataRecord = self.theDatabaseManager.RaceData_T(year,race_data['CircuitName'],driver_name,race_time)
-                        racesData[i] = raceDataRecord
                         # Todo - uncomment this following debug.  Only commented out to prevent trashing database
                         # self.theDatabaseManager.storeF1AllRaceData(raceDataRecord)
-                        i+=1
-                        print(self.theProgress)
                 except Exception:
                     pass
 
